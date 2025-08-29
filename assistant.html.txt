@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .message {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-dots::after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+    <div class="flex h-screen">
+        <!-- Barre latérale -->
+        <div class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+            <div class="p-4">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Assistant IA</h1>
+            </div>
+            
+            <div class="flex-1 p-2">
+                <button id="new-chat" class="w-full mb-4 bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center">
+                    + Nouvelle conversation
+                </button>
+            </div>
+        </div>
+        
+        <!-- Zone de chat -->
+        <div class="flex-1 flex flex-col">
+            <div id="chat-area" class="flex-1 p-4">
+                <div class="text-center pt-16 text-gray-500 dark:text-gray-400">
+                    <h2 class="text-xl font-semibold mb-2">Assistant IA</h2>
+                    <p>Version de démonstration - pas besoin de clé API</p>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <div class="relative">
+                    <textarea 
+                        id="message-input"
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 resize-none"
+                        placeholder="Posez votre question..."
+                        rows="1"
+                    ></textarea>
+                    <button id="send-button" class="absolute right-3 bottom-3 p-2 bg-blue-600 text-white rounded-lg">
+                        Envoyer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatArea = document.getElementById('chat-area');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const newChatButton = document.getElementById('new-chat');
+
+            // Fonction pour ajouter un message
+            function addMessage(text, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `max-w-3xl mx-auto mb-4 ${isUser ? 'ml-auto' : 'mr-auto'}`;
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = isUser ? 
+                    'bg-blue-600 text-white rounded-2xl rounded-tr-none px-4 py-2' : 
+                    'bg-gray-100 dark:bg-gray-700 rounded-2xl rounded-tl-none px-4 py-2';
+                contentDiv.textContent = text;
+                
+                messageDiv.appendChild(contentDiv);
+                chatArea.appendChild(messageDiv);
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+
+            // Envoi de message
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                addMessage(message, true);
+                messageInput.value = '';
+                
+                // Réponse simulée
+                setTimeout(() => {
+                    const responses = [
+                        "Je comprends votre question. Je suis là pour vous aider !",
+                        "C'est une excellente question ! Voici ce que je peux vous dire...",
+                        "Merci pour votre message. Je vais vous aider avec plaisir.",
+                        "Intéressant ! Permettez-moi de vous donner ma réponse."
+                    ];
+                    addMessage(responses[Math.floor(Math.random() * responses.length)]);
+                }, 1000);
+            }
+
+            // Événements
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            newChatButton.addEventListener('click', () => {
+                chatArea.innerHTML = '';
+                addMessage("Nouvelle conversation démarrée. Comment puis-je vous aider ?");
+            });
+
+            // Message de bienvenue
+            addMessage("Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider aujourd'hui ?");
+        });
+    </script>
+</body>
+</html>
